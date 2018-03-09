@@ -1,0 +1,2 @@
+# Image Classification For University
+This projects works with https://www.kaggle.com/c/dogs-vs-cats/data they have to be 2000 total and 1000 for each dogs and cats folder. They have to be in a main folder data and subfolders(validation/cat, validation/dogs and the same for train). In validation there have to be 400 extra photos.
