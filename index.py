@@ -45,22 +45,24 @@ train_data_dir = 'data/train'
 validation_data_dir = 'data/validation'
 nb_train_samples = 2000
 nb_validation_samples = 800
-epochs = 50
-batch_size = 16
+epochs = 50 # ob
+batch_size = 16 # na
 
 
 def save_bottlebeck_features():
     datagen = ImageDataGenerator(rescale=1. / 255)
 
-    # build the VGG16 network
+    # build the VGG16 network - ImageNet dataset 
     model = applications.VGG16(include_top=False, weights='imagenet')
 
     generator = datagen.flow_from_directory(
         train_data_dir,
         target_size=(img_width, img_height),
         batch_size=batch_size,
-        class_mode=None,
-        shuffle=False)
+        class_mode=None,# this means our generator will only yield batches of data, no labels
+        shuffle=False) # our data will be in order, so all first 1000 images will be cats, then 1000 dogs
+        # the predict_generator method returns the output of a model, given
+# a generator that yields batches of numpy data
     bottleneck_features_train = model.predict_generator(
         generator, nb_train_samples // batch_size)
     np.save(open('bottleneck_features_train.npy', 'w'),
@@ -77,7 +79,7 @@ def save_bottlebeck_features():
     np.save(open('bottleneck_features_validation.npy', 'w'),
             bottleneck_features_validation)
 
-
+# load our saved data and train a small fully-connected model:
 def train_top_model():
     train_data = np.load(open('bottleneck_features_train.npy'))
     train_labels = np.array(
@@ -87,10 +89,11 @@ def train_top_model():
     validation_labels = np.array(
         [0] * (nb_validation_samples / 2) + [1] * (nb_validation_samples / 2))
 
+    # build a classifier model to put on top of the convolutional model
     model = Sequential()
     model.add(Flatten(input_shape=train_data.shape[1:]))
     model.add(Dense(256, activation='relu'))
-    model.add(Dropout(0.5))
+    model.add(Dropout(0.5)) # prevent overfitting
     model.add(Dense(1, activation='sigmoid'))
 
     model.compile(optimizer='rmsprop',
