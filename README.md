@@ -16,3 +16,6 @@ there copies which it rotates. The method use pretrained database (VGG16 network
 The folder structure 
 date/train/ for training 
 data/validation/ for testing the algorithm
+
+epochs - for one iteration images
+batch_size - all iterations
